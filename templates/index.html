@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoPredict | Volatility Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Crypto<span>Predict</span></h2>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li class="active" data-page="home">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        Dashboard
+                    </li>
+                    <li data-page="bitcoin">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+                        Bitcoin (BTC)
+                    </li>
+                    <li data-page="ethereum">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 22 22 22"></polygon></svg>
+                        Ethereum (ETH)
+                    </li>
+                    <li data-page="xrp">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line><line x1="12" y1="8" x2="12" y2="16"></line></svg>
+                        Ripple (XRP)
+                    </li>
+                    <li data-page="predict" class="predict-link">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        Price Prediction
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Powered by LSTM</p>
+                <p class="status"><span class="dot"></span> System Online</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header>
+                <h1 id="page-title">Dashboard Overview</h1>
+            </header>
+
+            <div class="pages">
+                <!-- Home Page -->
+                <div id="page-home" class="page-section active">
+                    <div class="welcome-banner">
+                        <div class="banner-content">
+                            <h2>Welcome back to your Crypto Hub</h2>
+                            <p>Track volatility and use AI to predict future market trends across the top assets.</p>
+                        </div>
+                    </div>
+                    <div class="cards-grid">
+                        <div class="stat-card glass" onclick="app.switchPage('bitcoin')">
+                            <div class="card-icon btc-color"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg></div>
+                            <h3>Bitcoin</h3>
+                            <p>View BTC Volatility</p>
+                        </div>
+                        <div class="stat-card glass" onclick="app.switchPage('ethereum')">
+                            <div class="card-icon eth-color"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 22 22 22"></polygon></svg></div>
+                            <h3>Ethereum</h3>
+                            <p>View ETH Volatility</p>
+                        </div>
+                        <div class="stat-card glass" onclick="app.switchPage('xrp')">
+                            <div class="card-icon xrp-color"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line><line x1="12" y1="8" x2="12" y2="16"></line></svg></div>
+                            <h3>XRP</h3>
+                            <p>View XRP Volatility</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coin Data Page (Used for BTC, ETH, XRP dynamically) -->
+                <div id="page-coin" class="page-section" style="display: none;">
+                    
+                    <div id="loading-overlay" class="loading-overlay glass">
+                        <div class="spinner"></div>
+                        <p>Loading market data...</p>
+                    </div>
+
+                    <div class="metrics-row">
+                        <div class="metric-box glass">
+                            <h4 id="coin-price-label">Current Price</h4>
+                            <h2 id="coin-latest-price">--</h2>
+                        </div>
+                        <div class="metric-box glass">
+                            <h4>Latest Volatility</h4>
+                            <h2 id="coin-latest-vol">--</h2>
+                        </div>
+                    </div>
+
+                    <div class="charts-container">
+                        <div class="chart-wrapper glass">
+                            <h3><span id="chart-title"></span> Price History</h3>
+                            <div class="chart-box">
+                                <canvas id="priceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper glass">
+                            <h3>Asset Volatility</h3>
+                            <div class="chart-box">
+                                <canvas id="volatilityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prediction Page -->
+                <div id="page-predict" class="page-section" style="display: none;">
+                    <div class="glass predict-panel">
+                        <div class="predict-header">
+                            <h2>Price Prediction Engine</h2>
+                            <p>Leverage our LSTM deep learning models to forecast future cryptocurrency prices.</p>
+                        </div>
+
+                        <form id="predict-form">
+                            <div class="form-group">
+                                <label>Select Asset</label>
+                                <select id="predict-coin" required>
+                                    <option value="" disabled selected>Choose a cryptocurrency</option>
+                                    <option value="bitcoin">Bitcoin (BTC)</option>
+                                    <option value="ethereum">Ethereum (ETH)</option>
+                                    <option value="xrp">Ripple (XRP)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Target Date</label>
+                                <input type="date" id="predict-date" required>
+                                <small>Select a date in the future to predict.</small>
+                            </div>
+                            
+                            <button type="submit" class="btn-glow" id="predict-btn">
+                                <span>Generate Prediction</span>
+                                <div class="btn-spinner" style="display:none;"></div>
+                            </button>
+                        </form>
+
+                        <div id="predict-result" class="predict-result glass" style="display: none;">
+                            <div class="result-box">
+                                <h4>Predicted <span id="res-coin"></span> Price on <span id="res-date"></span></h4>
+                                <h1 id="res-price">--</h1>
+                                <p class="last-price-info">Last known price: <span id="res-last-price"></span> (<span id="res-last-date"></span>)</p>
+                            </div>
+                        </div>
+                        <div id="predict-error" class="predict-error" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
