@@ -2,6 +2,5 @@ flask
 flask-cors
 pandas
 numpy
-tensorflow
-scikit-learn
-joblib
+tensorflow==2.15.0
+gunicorn
