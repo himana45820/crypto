@@ -181,6 +181,8 @@ def debug_env():
     }
 @app.route('/dash')
 def index():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
     return render_template('index.html')
 
 @app.route('/api/data/<coin>', methods=['GET'])
