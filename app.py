@@ -171,7 +171,14 @@ def load_and_clean_data(coin_key):
     df = df.dropna()
     
     return df
-
+@app.route("/debug-env")
+def debug_env():
+    return {
+        "host": str(os.getenv("MYSQLHOST")),
+        "user": str(os.getenv("MYSQLUSER")),
+        "db": str(os.getenv("MYSQLDATABASE")),
+        "port": str(os.getenv("MYSQLPORT"))
+    }
 @app.route('/dash')
 def index():
     return render_template('index.html')
