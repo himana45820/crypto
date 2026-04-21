@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, render_template
+# from flask import Flask, request, jsonify, render_template
+from flask import Flask, render_template, request, session,redirect, url_for, flash,jsonify
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
@@ -7,10 +8,14 @@ from tensorflow.keras.models import load_model
 import joblib
 from datetime import datetime
 import os
-
+import mysql.connector
 app = Flask(__name__)
 CORS(app)
-
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="your_database_name")
 # ==========================================
 # CONFIGURATION
 # ==========================================
@@ -157,7 +162,7 @@ def load_and_clean_data(coin_key):
     
     return df
 
-@app.route('/')
+@app.route('/dash')
 def index():
     return render_template('index.html')
 
@@ -254,6 +259,28 @@ def predict():
     except Exception as e:
         import traceback
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+
+
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT * FROM users WHERE email=%s AND password=%s"
+        cursor.execute(query, (email, password))
+        user = cursor.fetchone()
+
+        if user:
+            session["user_id"] = user["id"]
+            session["role"] = user["role"]
+            return redirect(url_for("index"))
+        else:
+            flash("Invalid Email or Password")
+
+    return render_template("login.html")
+
 
 # if __name__ == '__main__':
 #     app.run(debug=True, port=5005)
