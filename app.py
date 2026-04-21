@@ -11,11 +11,21 @@ import os
 import mysql.connector
 app = Flask(__name__)
 CORS(app)
-conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="your_database_name")
+# conn = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     password="",
+#     database="your_database_name")
+def get_db_connection():
+    return mysql.connector.connect(
+        host=os.getenv("MYSQLHOST"),
+        user=os.getenv("MYSQLUSER"),
+        password=os.getenv("MYSQLPASSWORD"),
+        database=os.getenv("MYSQLDATABASE"),
+        port=os.getenv("MYSQLPORT")
+    )
+
+app.secret_key = "your_secret_key"
 # ==========================================
 # CONFIGURATION
 # ==========================================
@@ -266,7 +276,7 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
-
+        conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         query = "SELECT * FROM users WHERE email=%s AND password=%s"
         cursor.execute(query, (email, password))
