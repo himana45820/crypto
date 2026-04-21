@@ -285,7 +285,7 @@ def login():
         password = request.form["password"]
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT * FROM users WHERE email=%s AND password=%s"
+        query = "SELECT * FROM userss WHERE email=%s AND password=%s"
         cursor.execute(query, (email, password))
         user = cursor.fetchone()
 
